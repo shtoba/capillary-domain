@@ -60,11 +60,11 @@ stdout_backup = sys.stdout
 sys.stdout = StringIO()
 
 
-# In[ ]:
+# In[4]:
 
 
 #sys.stdout = stdout_backup # print log for get_nearest_intersections()
-points = points3
+points = points0
 
 all_lines = points_to_lines(points)
 all_intersections = lines_to_intersections(all_lines)
@@ -72,13 +72,13 @@ nearest_intersections = get_nearest_intersections(points, all_lines, all_interse
 segments = get_line_segments(nearest_intersections)
 
 
-# In[ ]:
+# In[5]:
 
 
 plot(points, all_lines, nearest_intersections, segments)
 
 
-# In[ ]:
+# In[6]:
 
 
 areas = calculate_areas(nearest_intersections)
