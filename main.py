@@ -3,13 +3,13 @@
 
 # # Initialization
 
-# In[43]:
+# In[1]:
 
 
 get_ipython().run_line_magic('run', 'utils.ipynb')
 
 
-# In[19]:
+# In[2]:
 
 
 field_min_x = 0
@@ -40,9 +40,9 @@ points2 = [[2,8],
           [6,4],
           [6,6]]
 
-points3 = [[4,3],[4,6],
-           [8,3],[8,6],
-           [12,3],[12,6]]
+points3 = [[4,3],[4,6],[4,9],
+           [8,3],[8,6],[8,9],
+           [12,3],[12,6],[12,9]]
 
 points4 = [[1,1],
           [1,4],
@@ -52,7 +52,7 @@ points4 = [[1,1],
           [3,2]]
 
 
-# In[20]:
+# In[3]:
 
 
 import random
@@ -63,7 +63,7 @@ points5 = [[x, y] for x, y in zip(rnd_x, rnd_y)]
 
 # # Calculation
 
-# In[21]:
+# In[4]:
 
 
 points = points3
@@ -74,30 +74,30 @@ nearest_intersections = get_nearest_intersections(points,
                                                   all_lines,
                                                   all_intersections,
                                                   show=False)
-segments = get_line_segments(nearest_intersections)
+segments = get_line_segments(nearest_intersections, show=False)
 
 
 # # Results
 
-# In[44]:
+# In[5]:
 
 
 plot(points, all_lines, nearest_intersections, segments)
 plot(points, all_lines, nearest_intersections, segments, simple=True, fill=True)
 
 
-# In[45]:
-
-
-organize_intersections(nearest_intersections)
-
-
-# In[46]:
+# In[6]:
 
 
 #sys.stdout = stdout_backup # print log for get_nearest_intersections()
 areas = calculate_areas(nearest_intersections)
 areas
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
