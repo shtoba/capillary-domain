@@ -48,7 +48,7 @@ rnd_x = sorted([random.random() * 15 for i in range(50)])
 rnd_y = [random.random() * 10 for i in range(50)]
 points5 = [[x, y] for x, y in zip(rnd_x, rnd_y)]
 
-points = points0
+points = points2
 
 all_lines = points_to_lines(points)
 all_intersections = lines_to_intersections(all_lines)

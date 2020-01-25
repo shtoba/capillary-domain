@@ -305,7 +305,7 @@ def get_line_segments(nearest_intersections):
     return segments
 
 
-# In[68]:
+# In[74]:
 
 
 def organize_intersections(nearest_intersections):
@@ -323,11 +323,15 @@ def organize_intersections(nearest_intersections):
         unders = []
         overs = []
         
+        saved_coords = []
+        
         for intx in intxns:
-            if intx['y'] > get_y(line, intx['x']):
-                overs.append(intx)
-            else:
-                unders.append(intx)
+            if not [intx['x'], intx['y']] in saved_coords:
+                saved_coords.append([intx['x'], intx['y']])
+                if intx['y'] > get_y(line, intx['x']):
+                    overs.append(intx)
+                else:
+                    unders.append(intx)
         
         unders = unders[::-1]
         overs.extend(unders)
@@ -409,13 +413,13 @@ def plot(points, all_lines, nearest_intersections, segments, simple=False, fill=
     for i in range(len(points)):
         plt.scatter(coord_x[i], coord_y[i], c=[colors[i]], marker='o', s=100, label=i)     
         
-    plt.legend(bbox_to_anchor=[1.2,1], ncol=len(points)//10)
+    plt.legend(bbox_to_anchor=[1.2,1], ncol=len(points)//10+1)
         
     plt.show()
     plt.close()
 
 
-# In[69]:
+# In[75]:
 
 
 def calculate_areas(nearest_intersections):

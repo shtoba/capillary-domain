@@ -3,13 +3,13 @@
 
 # # Initialization
 
-# In[1]:
+# In[43]:
 
 
 get_ipython().run_line_magic('run', 'utils.ipynb')
 
 
-# In[2]:
+# In[19]:
 
 
 field_min_x = 0
@@ -17,17 +17,18 @@ field_max_x = 15
 field_min_y = 0
 field_max_y = 10
 
-points0 = [[2,2],
-          [2,8],
-          [5,1],
-          [10,8],
-          [1,5],
-          [4,8],
-          [6,6],
-          [10,4],
-          [14,6],
-          [10,6],
-          [12,9]]
+points0 = [[1,5],
+           [2,2],
+           [2,8],
+           [4,8],
+           [5,1],
+           [6,6],
+           [10,4],
+           [10,6],
+           [10,8],
+           [12,9],
+           [12,1],
+           [14,6]]
 
 points1 = [[2,8],
           [10,8],
@@ -39,13 +40,9 @@ points2 = [[2,8],
           [6,4],
           [6,6]]
 
-points3 = [[1,1],[1,3],[1,5],[1,7],[1,9],
-           [3,1],[3,3],[3,5],[3,7],[3,9],
-           [5,1],[5,3],[5,5],[5,7],[5,9],
-           [7,1],[7,3],[7,5],[7,7],[7,9],
-           [9,1],[9,3],[9,5],[9,7],[9,9],
-           [11,1],[11,3],[11,5],[11,7],[11,9],
-           [13,1],[13,3],[13,5],[13,7],[13,9]]
+points3 = [[4,3],[4,6],
+           [8,3],[8,6],
+           [12,3],[12,6]]
 
 points4 = [[1,1],
           [1,4],
@@ -55,7 +52,7 @@ points4 = [[1,1],
           [3,2]]
 
 
-# In[3]:
+# In[20]:
 
 
 import random
@@ -66,18 +63,10 @@ points5 = [[x, y] for x, y in zip(rnd_x, rnd_y)]
 
 # # Calculation
 
-# In[4]:
+# In[21]:
 
 
-stdout_backup = sys.stdout
-sys.stdout = StringIO()
-
-
-# In[5]:
-
-
-#sys.stdout = stdout_backup # print log for get_nearest_intersections()
-points = points0
+points = points3
 
 all_lines = points_to_lines(points)
 all_intersections = lines_to_intersections(all_lines)
@@ -90,25 +79,25 @@ segments = get_line_segments(nearest_intersections)
 
 # # Results
 
-# In[6]:
+# In[44]:
 
 
 plot(points, all_lines, nearest_intersections, segments)
-plot(points, all_lines, nearest_intersections, segments, simple=True)
+plot(points, all_lines, nearest_intersections, segments, simple=True, fill=True)
 
 
-# In[7]:
+# In[45]:
 
 
-sys.stdout = stdout_backup # print log for get_nearest_intersections()
+organize_intersections(nearest_intersections)
+
+
+# In[46]:
+
+
+#sys.stdout = stdout_backup # print log for get_nearest_intersections()
 areas = calculate_areas(nearest_intersections)
 areas
-
-
-# In[ ]:
-
-
-
 
 
 # In[ ]:
