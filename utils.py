@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[60]:
 
 
 get_ipython().run_line_magic('matplotlib', 'inline')
@@ -10,15 +10,17 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+import matplotlib.ticker as ticker
 import pandas as pd
 import random
 import collections
 import pprint
 import sys
 from io import StringIO
+from statistics import stdev, mean
 
 
-# In[17]:
+# In[2]:
 
 
 # Second ver. 200124
@@ -56,7 +58,7 @@ def points_to_lines(points):
     return lines
 
 
-# In[19]:
+# In[3]:
 
 
 def get_intersection(line1, line2):
@@ -78,7 +80,7 @@ def get_intersection(line1, line2):
         return dict_tmp
 
 
-# In[20]:
+# In[4]:
 
 
 def get_y(line, x):
@@ -88,7 +90,7 @@ def get_y(line, x):
         return -(line['a'] * x + line['c']) / line['b']
 
 
-# In[21]:
+# In[5]:
 
 
 def lines_to_intersections(all_lines):
@@ -117,20 +119,20 @@ def lines_to_intersections(all_lines):
     return intersections
 
 
-# In[1]:
+# In[6]:
 
 
-def get_nearest_intersections(points, all_lines, all_intersections):
+def get_nearest_intersections(points, all_lines, all_intersections, show=False):
     nearest_intersections = {}
     
     for point_id, intersections in all_intersections.items():
-        print('Point id:', point_id)
+        if show: print('*** Point id:', point_id)
         p = points[point_id]
         nearest_intersections[point_id] = []
         duplicate = False
         
         for intxn in intersections:
-            print('    Intxn:', intxn)
+            if show: print('    Intxn:', intxn)
             line_to_intxn = {'a': intxn['y'] - p[1],
                              'b': p[0] - intxn['x'],
                              'c': (intxn['x'] - p[0]) * p[1] - (intxn['y'] - p[1]) * p[0]}
@@ -141,9 +143,9 @@ def get_nearest_intersections(points, all_lines, all_intersections):
             
             
             for line in lines:
-                print('        Line:', line)
+                if show: print('        Line:', line)
                 intxn_new = get_intersection(line, line_to_intxn)
-                print('          intxn_new:', intxn_new, end='')
+                if show: print('          intxn_new:', intxn_new, end='')
                 
                 if intxn_new:
                     min_x = min(p[0], intxn['x'])
@@ -153,35 +155,35 @@ def get_nearest_intersections(points, all_lines, all_intersections):
 
                     if min_x <= intxn_new['x'] <= max_x and min_y <= intxn_new['y'] <= max_y:
                         if intxn_new['y'] == intxn['y'] and intxn_new['x'] == intxn['x']:
-                            print(' On the line')
+                            if show: print(' On the line')
                         else:
-                            print(' NG')
+                            if show: print(' NG')
                             add_to_list = False
                     else:
-                        print('')
+                        if show: print('')
                 else:
-                    print('')
+                    if show: print('')
             
             if add_to_list:
                 existing_intxn_list = [[a['x'], a['y']] for a in nearest_intersections[point_id]]
                 if [intxn['x'], intxn['y']] in existing_intxn_list:
                     duplicate = True
-                    print('        -> OK (Already exists)', end='\n\n')
+                    if show: print('        -> OK (Already exists)', end='\n\n')
                 else:
-                    print('        -> OK', end='\n\n')
+                    if show: print('        -> OK', end='\n\n')
 
                 nearest_intersections[point_id].append(intxn)
             else:
-                print('        -> NG', end='\n\n')
+                if show: print('        -> NG', end='\n\n')
     
-        pprint.pprint(nearest_intersections[point_id])
-        print('')
+        if show: pprint.pprint(nearest_intersections[point_id])
+        if show: print('')
 
         # Algorithm for removing duplicated intersections (may not be perfect)
         if duplicate:
             line_ids = [x['id'][0] for x in nearest_intersections[point_id]]
             line_ids.extend([x['id'][1] for x in nearest_intersections[point_id]])
-            print('line_ids', line_ids)
+            if show: print('line_ids', line_ids)
             count = collections.Counter(tuple(item) for item in line_ids)
             
             duplicate_ids_org = []
@@ -190,26 +192,28 @@ def get_nearest_intersections(points, all_lines, all_intersections):
                     for i in range(v - 2):
                         duplicate_ids_org.append(k)
             
-            print(count)
-            print('duplicate_ids_org', duplicate_ids_org)
+            if show: print(count)
+            if show: print('duplicate_ids_org', duplicate_ids_org)
             
             finish = False
             
             while not finish:
-                print('')
-                print('*** New loop ***')
+                if show: print('')
+                if show: print('*** New loop ***')
+                
                 duplicate_ids = random.sample(duplicate_ids_org, len(duplicate_ids_org))
-                print('duplicate_ids', duplicate_ids)
+                
+                if show: print('duplicate_ids', duplicate_ids)
                 
                 n_intxns_copy = nearest_intersections[point_id].copy()
                 
                 for id1 in duplicate_ids:
-                    print('id1', id1)
+                    if show: print('id1', id1)
                     other_duplicate_ids = duplicate_ids.copy()
                     other_duplicate_ids = [x for x in other_duplicate_ids if not x == id1]
 
                     for id2 in other_duplicate_ids:
-                        print('id2', id2)
+                        if show: print('id2', id2)
                         if len(id1) > 2:
                             id1_org = ''.join(id1)
                         else:
@@ -222,33 +226,29 @@ def get_nearest_intersections(points, all_lines, all_intersections):
 
                         intxn_to_remove = [d for d in nearest_intersections[point_id]                                           if d['id'] == [id1_org, id2_org] or d['id'] == [id2_org, id1_org]]
                         
-                        print(intxn_to_remove)
+                        if show: print(intxn_to_remove)
 
                         if intxn_to_remove:
                             try:
                                 duplicate_ids.remove(id1)
                                 duplicate_ids.remove(id2)
 
-                                #print('IDs', id1, id2)
-
-                                print('Remove:', id1_org, id2_org)
-                                print('Before')
-                                pprint.pprint(n_intxns_copy)
-
-                                print('Removing:', intxn_to_remove)
+                                if show: print('Removing:', intxn_to_remove)
 
                                 n_intxns_copy.remove(intxn_to_remove[0])
 
-                                print('After')
-                                pprint.pprint(n_intxns_copy)
+                                if show: print('After removal')
+                                if show: pprint.pprint(n_intxns_copy)
 
                                 if not duplicate_ids:
                                     finish = True
-                                    print('')
-                                    print('Done')
+                                    if show: print('')
+                                    if show: print('Done')
+                                    
                                     nearest_intersections[point_id] = n_intxns_copy
-                                    pprint.pprint(nearest_intersections[point_id])
-                                    print('')
+                                    
+                                    if show: pprint.pprint(nearest_intersections[point_id])
+                                    if show: print('')
 
                             except:
                                 break
@@ -259,7 +259,7 @@ def get_nearest_intersections(points, all_lines, all_intersections):
     return nearest_intersections
 
 
-# In[23]:
+# In[7]:
 
 
 def get_unique_list(seq):
@@ -267,7 +267,7 @@ def get_unique_list(seq):
     return [x for x in seq if x not in seen and not seen.append(x)]
 
 
-# In[1]:
+# In[8]:
 
 
 def get_line_segments(nearest_intersections):
@@ -305,10 +305,42 @@ def get_line_segments(nearest_intersections):
     return segments
 
 
-# In[8]:
+# In[68]:
 
 
-def plot(points, all_lines, nearest_intersections, segments, simple=False):
+def organize_intersections(nearest_intersections):
+    intxns_new = {}
+        
+    for point_id, intxns in nearest_intersections.items():
+        intxns.sort(key=lambda i: i['x'])
+        first = intxns[0]
+        last = intxns[-1]
+        
+        line = {'a': first['y'] - last['y'],
+                'b': last['x'] - first['x'],
+                'c': (first['x'] - last['x']) * last['y'] - (first['y'] - last['y']) * last['x']}
+        
+        unders = []
+        overs = []
+        
+        for intx in intxns:
+            if intx['y'] > get_y(line, intx['x']):
+                overs.append(intx)
+            else:
+                unders.append(intx)
+        
+        unders = unders[::-1]
+        overs.extend(unders)
+        
+        intxns_new[point_id] = overs
+                
+    return intxns_new
+
+
+# In[67]:
+
+
+def plot(points, all_lines, nearest_intersections, segments, simple=False, fill=False):
     plt.xlim(field_min_x, field_max_x)
     plt.ylim(field_min_y, field_max_y)
     
@@ -349,7 +381,7 @@ def plot(points, all_lines, nearest_intersections, segments, simple=False):
                         edgecolors=[colors[point_id]],
                         clip_on=False,
                         s=50)
-        
+    
     for point_id, segs in segments.items():
         if point_id == 7 or True:
             for seg in segs:
@@ -366,6 +398,13 @@ def plot(points, all_lines, nearest_intersections, segments, simple=False):
                              [seg['y1'] + delta_y[point_id],
                               seg['y2'] + delta_y[point_id]],
                              c=colors[point_id], clip_on=False, alpha=0.6, linewidth=2)
+                    
+    if fill:
+        nearest_intersections = organize_intersections(nearest_intersections)
+        for point_id, intxns in nearest_intersections.items():
+            coords = [[i['x'], i['y']] for i in intxns]
+            tmp = plt.Polygon(coords, fc=colors[point_id], alpha=0.15)
+            plt.gca().add_patch(tmp)
                 
     for i in range(len(points)):
         plt.scatter(coord_x[i], coord_y[i], c=[colors[i]], marker='o', s=100, label=i)     
@@ -376,43 +415,11 @@ def plot(points, all_lines, nearest_intersections, segments, simple=False):
     plt.close()
 
 
-# In[4]:
-
-
-def organize_intersections(nearest_intersections):
-    intxns_new = {}
-        
-    for point_id, intxns in nearest_intersections.items():
-        intxns.sort(key=lambda i: i['x'])
-        first = intxns[0]
-        last = intxns[-1]
-        
-        line = {'a': first['y'] - last['y'],
-                'b': last['x'] - first['x'],
-                'c': (first['x'] - last['x']) * last['y'] - (first['y'] - last['y']) * last['x']}
-        
-        unders = []
-        overs = []
-        
-        for intx in intxns:
-            if intx['y'] > get_y(line, intx['x']):
-                overs.append(intx)
-            else:
-                unders.append(intx)
-        
-        unders = unders[::-1]
-        overs.extend(unders)
-        
-        intxns_new[point_id] = overs
-                
-    return intxns_new
-
-
-# In[6]:
+# In[69]:
 
 
 def calculate_areas(nearest_intersections):
-    areas = []
+    areas_list = []
     
     nearest_intersections = organize_intersections(nearest_intersections)
     
@@ -422,12 +429,34 @@ def calculate_areas(nearest_intersections):
         
         area = 0.5*np.abs(np.dot(x,np.roll(y,1))-np.dot(y,np.roll(x,1)))
         
-        areas.append(area)
+        areas_list.append(area)
+        
+    areas = np.array(areas_list)
+    radius = np.sqrt(areas / np.pi)
+    radius_sd = stdev(radius)
+    
+    radius_log = np.log10(radius)
+    radius_log_sd = stdev(radius_log)
+    
+    plt.hist(radius)
+    plt.xlabel('Radius')
+    plt.ylabel('Frequency')
+    plt.gca().get_yaxis().set_major_locator(ticker.MaxNLocator(integer=True))
+    plt.show()
+    plt.close()
+    
+    print('Mean radius     :', mean(radius))
+    print('SD radius       :', radius_sd)
+    print('Mean log radius :', mean(radius_log))
+    print('SD log radius   :', radius_log_sd)
 
-    return pd.DataFrame(areas, columns=['area'])
+    results = np.stack([areas, radius, radius_log], 1)
+    df = pd.DataFrame(results, columns=['area', 'radius', 'radius_log'])
+    
+    return df
 
 
-# In[7]:
+# In[15]:
 
 
 def get_distance(p1, p2):
