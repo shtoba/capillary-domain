@@ -267,7 +267,7 @@ def get_unique_list(seq):
     return [x for x in seq if x not in seen and not seen.append(x)]
 
 
-# In[2]:
+# In[1]:
 
 
 def get_line_segments(nearest_intersections):
@@ -305,28 +305,23 @@ def get_line_segments(nearest_intersections):
     return segments
 
 
-# In[3]:
+# In[8]:
 
 
-def plot(points, all_lines, nearest_intersections, segments, show_all_lines = True):
+def plot(points, all_lines, nearest_intersections, segments, simple=False):
     plt.xlim(field_min_x, field_max_x)
     plt.ylim(field_min_y, field_max_y)
     
     coord_x = [x[0] for x in points]
     coord_y = [x[1] for x in points]
     
-    colors = cm.rainbow(np.linspace(0, 1, len(points)))
-    random_value = np.array([random.random() for i in range(len(points))])
-    random_value = (random_value - 0.5) * 0.2
+    colors = cm.gist_rainbow(np.linspace(0, 1, len(points)))
     
     delta_ratio = 0.02
     delta_x = np.array([(x[0]-(field_max_x-field_min_x)/2)*delta_ratio for x in points])
     delta_y = np.array([(x[1]-(field_max_y-field_min_y)/2)*delta_ratio for x in points])
     
-    for i in range(len(points)):
-        plt.scatter(coord_x[i], coord_y[i], c=[colors[i]], marker='o', s=100)
-    
-    if show_all_lines:
+    if not simple:
         for point_id, lines in all_lines.items():
             for line in lines:
                 if line['b'] == 0:
@@ -339,32 +334,46 @@ def plot(points, all_lines, nearest_intersections, segments, show_all_lines = Tr
                              [get_y(line, field_min_x), get_y(line, field_max_x)],
                              c='tab:gray',
                              linewidth=0.1)
-    
-    for point_id, intxn in nearest_intersections.items():
-        #rnd_value = np.array([random_value[point_id] for i in range(len(intxn))])
-        rnd_value_x = np.array([delta_x[point_id] for i in range(len(intxn))])
-        rnd_value_y = np.array([delta_y[point_id] for i in range(len(intxn))])
-        coord_x = np.array([x['x'] for x in intxn])
-        coord_y = np.array([x['y'] for x in intxn])
-        plt.scatter(coord_x + rnd_value_x, coord_y + rnd_value_y,
-                    c=[colors[point_id]],
-                    alpha=0.6,
-                    edgecolors=[colors[point_id]],
-                    clip_on=False,
-                    s=50,
-                    label=point_id)
-    plt.legend(bbox_to_anchor=[1.2,1])
+
+        
+    if not simple:
+        for point_id, intxn in nearest_intersections.items():
+            #rnd_value = np.array([random_value[point_id] for i in range(len(intxn))])
+            rnd_value_x = np.array([delta_x[point_id] for i in range(len(intxn))])
+            rnd_value_y = np.array([delta_y[point_id] for i in range(len(intxn))])
+            coord_x_intxn = np.array([x['x'] for x in intxn])
+            coord_y_intxn = np.array([x['y'] for x in intxn])
+            plt.scatter(coord_x_intxn + rnd_value_x, coord_y_intxn + rnd_value_y,
+                        c=[colors[point_id]],
+                        #alpha=1,
+                        edgecolors=[colors[point_id]],
+                        clip_on=False,
+                        s=50)
         
     for point_id, segs in segments.items():
         if point_id == 7 or True:
             for seg in segs:
-                plt.plot([seg['x1'] + delta_x[point_id],
-                          seg['x2'] + delta_x[point_id]],
-                         [seg['y1'] + delta_y[point_id],
-                          seg['y2'] + delta_y[point_id]],
-                         c=colors[point_id], clip_on=False, alpha=0.6, linewidth=2)
+                if simple:
+                    plt.plot([seg['x1'],
+                              seg['x2']],
+                             [seg['y1'],
+                              seg['y2']],
+                             c=colors[point_id], clip_on=False, alpha=0.6, linewidth=2)
+                    
+                else:
+                    plt.plot([seg['x1'] + delta_x[point_id],
+                              seg['x2'] + delta_x[point_id]],
+                             [seg['y1'] + delta_y[point_id],
+                              seg['y2'] + delta_y[point_id]],
+                             c=colors[point_id], clip_on=False, alpha=0.6, linewidth=2)
+                
+    for i in range(len(points)):
+        plt.scatter(coord_x[i], coord_y[i], c=[colors[i]], marker='o', s=100, label=i)     
+        
+    plt.legend(bbox_to_anchor=[1.2,1], ncol=len(points)//10)
         
     plt.show()
+    plt.close()
 
 
 # In[4]:

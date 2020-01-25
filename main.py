@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# # Initialization
+
+# In[45]:
 
 
 get_ipython().run_line_magic('run', 'utils.ipynb')
@@ -56,15 +58,26 @@ points4 = [[1,1],
 # In[3]:
 
 
-stdout_backup = sys.stdout
-sys.stdout = StringIO()
+import random
+rnd_x = sorted([random.random() * 15 for i in range(50)])
+rnd_y = [random.random() * 10 for i in range(50)]
+points5 = [[x, y] for x, y in zip(rnd_x, rnd_y)]
 
+
+# # Calculation
 
 # In[4]:
 
 
+stdout_backup = sys.stdout
+sys.stdout = StringIO()
+
+
+# In[5]:
+
+
 #sys.stdout = stdout_backup # print log for get_nearest_intersections()
-points = points0
+points = points5
 
 all_lines = points_to_lines(points)
 all_intersections = lines_to_intersections(all_lines)
@@ -72,13 +85,16 @@ nearest_intersections = get_nearest_intersections(points, all_lines, all_interse
 segments = get_line_segments(nearest_intersections)
 
 
-# In[5]:
+# # Results
+
+# In[46]:
 
 
 plot(points, all_lines, nearest_intersections, segments)
+plot(points, all_lines, nearest_intersections, segments, simple=True)
 
 
-# In[6]:
+# In[20]:
 
 
 areas = calculate_areas(nearest_intersections)
