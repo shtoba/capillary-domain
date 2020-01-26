@@ -4,7 +4,7 @@ Plot capillary domains and calculate areas based on the coordinates of the capil
  
 # DEMO
  
-<img src="./sample_image_1.png" width=280>
+<img src="./sample_image_1.png" width=500>
 <img src="./sample_image_2.png" width=250>
   
 # Requirement
