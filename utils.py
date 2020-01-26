@@ -358,6 +358,9 @@ def calculate_areas(nearest_intersections):
         
         areas_list.append(area)
         
+    field = (field_max_x - field_min_x) * (field_max_y - field_min_y) / 1000 / 1000
+    cap_dens = len(nearest_intersections) / field
+    
     areas = np.array(areas_list)
     radius = np.sqrt(areas / np.pi)
     radius_sd = stdev(radius)
@@ -372,10 +375,11 @@ def calculate_areas(nearest_intersections):
     plt.show()
     plt.close()
     
-    print('Mean radius     :', mean(radius))
-    print('SD radius       :', radius_sd)
-    print('Mean log radius :', mean(radius_log))
-    print('SD log radius   :', radius_log_sd)
+    print('Density (No./mm2)    :', cap_dens)
+    print('Mean radius (um)     :', mean(radius))
+    print('SD radius (um)       :', radius_sd)
+    print('Mean log radius (um) :', mean(radius_log))
+    print('SD log radius (x1000):', radius_log_sd * 1000)
 
     results = np.stack([areas, radius, radius_log], 1)
     df = pd.DataFrame(results, columns=['area', 'radius', 'radius_log'])

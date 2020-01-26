@@ -10,7 +10,17 @@ parallel = True
 get_ipython().run_line_magic('run', 'utils.ipynb')
 
 
-# In[4]:
+# In[2]:
+
+
+# unit: um
+field_min_x = 0
+field_max_x = 226.3
+field_min_y = 0
+field_max_y = 132.22
+
+
+# In[3]:
 
 
 if parallel:
@@ -82,13 +92,10 @@ if parallel:
         return nearest_intersections
 
 
-# In[5]:
+# # Points for test
 
+# In[4]:
 
-field_min_x = 0
-field_max_x = 15
-field_min_y = 0
-field_max_y = 10
 
 points0 = [[1,5],
            [2,2],
@@ -125,7 +132,7 @@ points4 = [[1,1],
           [3,2]]
 
 
-# In[6]:
+# In[5]:
 
 
 import random
@@ -134,17 +141,26 @@ rnd_y = [random.random() * 10 for i in range(50)]
 points5 = [[x, y] for x, y in zip(rnd_x, rnd_y)]
 
 
+# # Load CSV
+
+# In[6]:
+
+
+df_coordinates = pd.read_csv('../../Second_section_Jones_PAS/200126test/200126coordinates.csv')
+points = [[row.at['X(um)'], row.at['Y(um)']] for i, row in df_coordinates.iterrows()]
+
+
 # # Calculation
 
-# In[15]:
+# In[7]:
 
 
-points = points5
+#points = points5
 all_lines = points_to_lines(points)
 all_intersections = lines_to_intersections(all_lines)
 
 
-# In[16]:
+# In[8]:
 
 
 if parallel:
@@ -158,7 +174,7 @@ else:
                                                       show=False)
 
 
-# In[22]:
+# In[9]:
 
 
 segments = get_line_segments(nearest_intersections, show=False)
@@ -166,14 +182,14 @@ segments = get_line_segments(nearest_intersections, show=False)
 
 # # Results
 
-# In[23]:
+# In[10]:
 
 
 plot(points, all_lines, nearest_intersections, segments)
 plot(points, all_lines, nearest_intersections, segments, simple=True, fill=True)
 
 
-# In[24]:
+# In[11]:
 
 
 #sys.stdout = stdout_backup # print log for get_nearest_intersections()
@@ -181,10 +197,10 @@ areas = calculate_areas(nearest_intersections)
 areas
 
 
-# In[ ]:
+# In[12]:
 
 
-
+areas.to_excel('../../Second_section_Jones_PAS/200126test/capillary_domain.xlsx')
 
 
 # In[ ]:
