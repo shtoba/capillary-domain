@@ -3,14 +3,14 @@
 
 # # Initialization
 
-# In[14]:
+# In[1]:
 
 
 parallel = True
 get_ipython().run_line_magic('run', 'utils.ipynb')
 
 
-# In[15]:
+# In[4]:
 
 
 if parallel:
@@ -82,7 +82,7 @@ if parallel:
         return nearest_intersections
 
 
-# In[3]:
+# In[5]:
 
 
 field_min_x = 0
@@ -125,7 +125,7 @@ points4 = [[1,1],
           [3,2]]
 
 
-# In[4]:
+# In[6]:
 
 
 import random
@@ -136,7 +136,7 @@ points5 = [[x, y] for x, y in zip(rnd_x, rnd_y)]
 
 # # Calculation
 
-# In[23]:
+# In[15]:
 
 
 points = points5
@@ -144,19 +144,21 @@ all_lines = points_to_lines(points)
 all_intersections = lines_to_intersections(all_lines)
 
 
-# In[24]:
+# In[16]:
 
 
-get_ipython().run_cell_magic('time', '', 'parallel = True\n\nif parallel:\n    nearest_intersections = get_nearest_intersections_parallel(points,\n                                                               all_lines,\n                                                               all_intersections)\nelse:\n    nearest_intersections = get_nearest_intersections(points,\n                                                      all_lines,\n                                                      all_intersections,\n                                                      show=False)')
+if parallel:
+    nearest_intersections = get_nearest_intersections_parallel(points,
+                                                               all_lines,
+                                                               all_intersections)
+else:
+    nearest_intersections = get_nearest_intersections(points,
+                                                      all_lines,
+                                                      all_intersections,
+                                                      show=False)
 
 
 # In[22]:
-
-
-get_ipython().run_cell_magic('time', '', 'parallel = False\n\nif parallel:\n    nearest_intersections = get_nearest_intersections(points,\n                                                      all_lines,\n                                                      all_intersections)\nelse:\n    nearest_intersections = get_nearest_intersections(points,\n                                                      all_lines,\n                                                      all_intersections,\n                                                      show=False,\n                                                      show_count=False)')
-
-
-# In[11]:
 
 
 segments = get_line_segments(nearest_intersections, show=False)
@@ -164,14 +166,14 @@ segments = get_line_segments(nearest_intersections, show=False)
 
 # # Results
 
-# In[5]:
+# In[23]:
 
 
 plot(points, all_lines, nearest_intersections, segments)
 plot(points, all_lines, nearest_intersections, segments, simple=True, fill=True)
 
 
-# In[6]:
+# In[24]:
 
 
 #sys.stdout = stdout_backup # print log for get_nearest_intersections()
