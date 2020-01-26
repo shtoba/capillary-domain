@@ -1,6 +1,6 @@
 # capillary-domain
  
-Plot capillary domains and calculate areas based on their coordinates.
+Plot capillary domains and calculate areas based on the coordinates of the capillaries.
  
 # DEMO
  
@@ -12,10 +12,7 @@ Plot capillary domains and calculate areas based on their coordinates.
 * numpy
 * matplotlib
 * pandas
- 
-# Note
- 
-Algorithm for removing duplicate intersections is not perfect.
+* (ipyparallel)
 
 # Reference
 
